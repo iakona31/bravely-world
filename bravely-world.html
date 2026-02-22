@@ -1,0 +1,898 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Bravely World</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700;900&family=Cinzel:wght@400;600;700&family=Crimson+Pro:ital,wght@0,300;0,400;0,600;1,300;1,400&display=swap" rel="stylesheet"/>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --gold: #c084fc;
+    --gold-light: #e879f9;
+    --gold-pale: #f0e6ff;
+    --crimson: #6d28d9;
+    --crimson-dark: #3b0764;
+    --ink: #080612;
+    --parchment: #f3e8ff;
+    --slate: #160d2e;
+    --mist: #ddd6fe;
+    --sage: #1e3a5f;
+    --blue: #38bdf8;
+    --blue-dark: #0369a1;
+    --pink: #f472b6;
+    --pink-dark: #be185d;
+    --violet: #7c3aed;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--ink);
+    color: var(--parchment);
+    font-family: 'Crimson Pro', Georgia, serif;
+    font-size: 18px;
+    overflow-x: hidden;
+    cursor: default;
+  }
+
+  /* ---- NAV ---- */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 1.2rem 4rem;
+    background: linear-gradient(to bottom, rgba(8,6,18,0.97) 0%, transparent 100%);
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid rgba(192,132,252,0.18);
+  }
+  .nav-logo {
+    font-family: 'Cinzel Decorative', serif;
+    font-size: 1.2rem;
+    color: var(--gold);
+    letter-spacing: 0.1em;
+    text-decoration: none;
+    text-shadow: 0 0 20px rgba(192,132,252,0.6);
+  }
+  .nav-links { display: flex; gap: 2.5rem; list-style: none; }
+  .nav-links a {
+    font-family: 'Cinzel', serif;
+    font-size: 0.78rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--mist);
+    text-decoration: none;
+    transition: color 0.3s;
+    position: relative;
+  }
+  .nav-links a::after {
+    content: ''; position: absolute; bottom: -4px; left: 0; right: 0;
+    height: 1px; background: var(--gold);
+    transform: scaleX(0); transition: transform 0.3s;
+  }
+  .nav-links a:hover { color: var(--pink); }
+  .nav-links a:hover::after { transform: scaleX(1); }
+
+  /* ---- HERO ---- */
+  #hero {
+    min-height: 100vh;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    position: relative; overflow: hidden;
+    text-align: center;
+    padding: 6rem 2rem 4rem;
+  }
+
+  .hero-bg {
+    position: absolute; inset: 0;
+    background:
+      radial-gradient(ellipse 80% 60% at 50% 40%, rgba(124,58,237,0.35) 0%, transparent 60%),
+      radial-gradient(ellipse 60% 80% at 15% 80%, rgba(56,189,248,0.15) 0%, transparent 50%),
+      radial-gradient(ellipse 60% 80% at 85% 20%, rgba(244,114,182,0.2) 0%, transparent 50%),
+      radial-gradient(ellipse 40% 40% at 50% 90%, rgba(109,40,217,0.2) 0%, transparent 60%),
+      linear-gradient(180deg, #080612 0%, #0d0920 50%, #080612 100%);
+  }
+
+  .stars {
+    position: absolute; inset: 0;
+    background-image:
+      radial-gradient(1px 1px at 10% 15%, rgba(192,132,252,0.8) 0%, transparent 100%),
+      radial-gradient(1px 1px at 25% 35%, rgba(56,189,248,0.5) 0%, transparent 100%),
+      radial-gradient(1.5px 1.5px at 40% 10%, rgba(244,114,182,0.6) 0%, transparent 100%),
+      radial-gradient(1px 1px at 55% 60%, rgba(255,255,255,0.3) 0%, transparent 100%),
+      radial-gradient(1px 1px at 70% 25%, rgba(192,132,252,0.5) 0%, transparent 100%),
+      radial-gradient(1.5px 1.5px at 85% 50%, rgba(56,189,248,0.6) 0%, transparent 100%),
+      radial-gradient(1px 1px at 15% 75%, rgba(244,114,182,0.4) 0%, transparent 100%),
+      radial-gradient(1px 1px at 90% 80%, rgba(255,255,255,0.4) 0%, transparent 100%),
+      radial-gradient(1px 1px at 60% 90%, rgba(192,132,252,0.5) 0%, transparent 100%),
+      radial-gradient(1.5px 1.5px at 30% 55%, rgba(56,189,248,0.3) 0%, transparent 100%),
+      radial-gradient(1px 1px at 75% 70%, rgba(244,114,182,0.5) 0%, transparent 100%),
+      radial-gradient(1px 1px at 5% 50%, rgba(192,132,252,0.4) 0%, transparent 100%);
+    animation: twinkle 8s ease-in-out infinite alternate;
+  }
+  @keyframes twinkle {
+    0% { opacity: 0.6; }
+    100% { opacity: 1; }
+  }
+
+  /* decorative crest lines */
+  .hero-crest {
+    position: relative; z-index: 2;
+    width: 120px; height: 2px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    margin: 0 auto 2rem;
+    animation: fadeIn 1.5s ease both;
+  }
+  .hero-crest::before, .hero-crest::after {
+    content: '✦';
+    position: absolute; top: 50%; transform: translateY(-50%);
+    color: var(--gold); font-size: 0.6rem;
+  }
+  .hero-crest::before { left: -1.5rem; }
+  .hero-crest::after { right: -1.5rem; }
+
+  .hero-eyebrow {
+    position: relative; z-index: 2;
+    font-family: 'Cinzel', serif;
+    font-size: 0.72rem;
+    letter-spacing: 0.4em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 1.5rem;
+    animation: fadeIn 1s ease 0.3s both;
+  }
+
+  h1 {
+    position: relative; z-index: 2;
+    font-family: 'Cinzel Decorative', serif;
+    font-size: clamp(3rem, 8vw, 7rem);
+    font-weight: 900;
+    line-height: 1.05;
+    color: var(--gold-pale);
+    text-shadow: 0 0 80px rgba(192,132,252,0.7), 0 0 30px rgba(244,114,182,0.4), 0 4px 20px rgba(0,0,0,0.8);
+    animation: heroReveal 1.4s cubic-bezier(0.16,1,0.3,1) 0.5s both;
+    margin-bottom: 0.3em;
+  }
+  h1 span { color: var(--gold); }
+
+  .hero-sub {
+    position: relative; z-index: 2;
+    font-size: 1.3rem;
+    font-style: italic;
+    color: var(--mist);
+    max-width: 560px;
+    line-height: 1.7;
+    margin: 1.5rem auto 2.5rem;
+    animation: fadeIn 1s ease 1s both;
+  }
+
+  .hero-btns {
+    position: relative; z-index: 2;
+    display: flex; gap: 1.2rem; justify-content: center; flex-wrap: wrap;
+    animation: fadeIn 1s ease 1.3s both;
+  }
+
+  .btn-primary {
+    font-family: 'Cinzel', serif;
+    font-size: 0.8rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: #fff;
+    background: linear-gradient(135deg, #a855f7, #ec4899);
+    border: none; padding: 1rem 2.5rem;
+    cursor: pointer; text-decoration: none;
+    transition: all 0.3s;
+    clip-path: polygon(8px 0%, 100% 0%, calc(100% - 8px) 100%, 0% 100%);
+    box-shadow: 0 4px 25px rgba(168,85,247,0.5);
+  }
+  .btn-primary:hover {
+    background: linear-gradient(135deg, #c084fc, #f472b6);
+    box-shadow: 0 6px 35px rgba(168,85,247,0.7);
+    transform: translateY(-2px);
+  }
+
+  .btn-secondary {
+    font-family: 'Cinzel', serif;
+    font-size: 0.8rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--blue);
+    background: transparent;
+    border: 1px solid rgba(56,189,248,0.4);
+    padding: 1rem 2.5rem;
+    cursor: pointer; text-decoration: none;
+    transition: all 0.3s;
+    clip-path: polygon(8px 0%, 100% 0%, calc(100% - 8px) 100%, 0% 100%);
+  }
+  .btn-secondary:hover {
+    border-color: var(--blue);
+    background: rgba(56,189,248,0.1);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 20px rgba(56,189,248,0.25);
+  }
+
+  .scroll-hint {
+    position: absolute; bottom: 2.5rem; left: 50%; transform: translateX(-50%);
+    z-index: 2;
+    font-family: 'Cinzel', serif;
+    font-size: 0.65rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: rgba(192,132,252,0.5);
+    display: flex; flex-direction: column; align-items: center; gap: 0.6rem;
+    animation: bounce 2s ease infinite;
+  }
+  .scroll-hint::after {
+    content: '';
+    display: block; width: 1px; height: 40px;
+    background: linear-gradient(to bottom, rgba(192,132,252,0.5), transparent);
+  }
+  @keyframes bounce {
+    0%, 100% { transform: translateX(-50%) translateY(0); }
+    50% { transform: translateX(-50%) translateY(6px); }
+  }
+
+  /* ---- SECTIONS COMMON ---- */
+  section { position: relative; }
+  .section-header {
+    text-align: center;
+    margin-bottom: 4rem;
+  }
+  .section-label {
+    display: block;
+    font-family: 'Cinzel', serif;
+    font-size: 0.68rem;
+    letter-spacing: 0.4em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 1rem;
+  }
+  .section-title {
+    font-family: 'Cinzel Decorative', serif;
+    font-size: clamp(1.8rem, 4vw, 3rem);
+    color: var(--gold-pale);
+    text-shadow: 0 2px 10px rgba(0,0,0,0.6);
+    margin-bottom: 1rem;
+  }
+  .divider {
+    display: flex; align-items: center; justify-content: center;
+    gap: 1rem; margin-top: 1.2rem;
+  }
+  .divider-line {
+    flex: 1; max-width: 100px; height: 1px;
+    background: linear-gradient(90deg, transparent, var(--gold));
+  }
+  .divider-line.right { background: linear-gradient(90deg, var(--gold), transparent); }
+  .divider span { color: var(--gold); font-size: 0.7rem; }
+
+  /* ---- LORE ---- */
+  #lore {
+    padding: 7rem 4rem;
+    background: linear-gradient(180deg, var(--ink) 0%, #0c0820 50%, var(--ink) 100%);
+  }
+  .lore-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 5rem;
+    max-width: 1100px;
+    margin: 0 auto;
+    align-items: center;
+  }
+  .lore-text p {
+    font-size: 1.15rem;
+    line-height: 1.9;
+    color: var(--mist);
+    margin-bottom: 1.4rem;
+  }
+  .lore-text p strong { color: var(--gold-light); font-weight: 600; }
+  .lore-art {
+    position: relative;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .lore-emblem {
+    width: 320px; height: 320px;
+    position: relative;
+  }
+  .lore-emblem svg {
+    width: 100%; height: 100%;
+    animation: rotateSlow 40s linear infinite;
+    filter: drop-shadow(0 0 20px rgba(168,85,247,0.5));
+  }
+  @keyframes rotateSlow {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+  .lore-emblem-center {
+    position: absolute; inset: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Cinzel Decorative', serif;
+    font-size: 1rem;
+    color: var(--gold);
+    text-align: center;
+    line-height: 1.4;
+    animation: glow 3s ease-in-out infinite alternate;
+  }
+  @keyframes glow {
+    0% { text-shadow: 0 0 10px rgba(192,132,252,0.4); }
+    100% { text-shadow: 0 0 35px rgba(244,114,182,0.9); }
+  }
+
+  /* ---- CHARACTERS ---- */
+  #characters {
+    padding: 7rem 4rem;
+    background: linear-gradient(180deg, var(--ink), #0a0618, var(--ink));
+  }
+  .chars-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2rem;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+  .char-card {
+    position: relative;
+    border: 1px solid rgba(192,132,252,0.2);
+    padding: 2.5rem 2rem;
+    text-align: center;
+    background: linear-gradient(145deg, rgba(124,58,237,0.06), rgba(244,114,182,0.04));
+    transition: all 0.4s;
+    overflow: hidden;
+    cursor: default;
+  }
+  .char-card::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: linear-gradient(135deg, rgba(192,132,252,0.1) 0%, rgba(56,189,248,0.05) 60%, transparent 100%);
+    opacity: 0; transition: opacity 0.4s;
+  }
+  .char-card:hover {
+    border-color: rgba(192,132,252,0.5);
+    transform: translateY(-6px);
+    box-shadow: 0 20px 50px rgba(0,0,0,0.5), 0 0 30px rgba(192,132,252,0.2);
+  }
+  .char-card:hover::before { opacity: 1; }
+  .char-icon {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    filter: drop-shadow(0 0 10px rgba(192,132,252,0.6));
+  }
+  .char-role {
+    font-family: 'Cinzel', serif;
+    font-size: 0.65rem;
+    letter-spacing: 0.35em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 0.5rem;
+  }
+  .char-name {
+    font-family: 'Cinzel Decorative', serif;
+    font-size: 1.2rem;
+    color: var(--gold-pale);
+    margin-bottom: 1rem;
+  }
+  .char-desc {
+    font-size: 0.98rem;
+    font-style: italic;
+    color: rgba(221,214,254,0.65);
+    line-height: 1.7;
+  }
+  .char-card .corner {
+    position: absolute;
+    width: 16px; height: 16px;
+    border-color: rgba(192,132,252,0.45);
+    border-style: solid;
+  }
+  .char-card .corner.tl { top: 8px; left: 8px; border-width: 1px 0 0 1px; }
+  .char-card .corner.tr { top: 8px; right: 8px; border-width: 1px 1px 0 0; }
+  .char-card .corner.bl { bottom: 8px; left: 8px; border-width: 0 0 1px 1px; }
+  .char-card .corner.br { bottom: 8px; right: 8px; border-width: 0 1px 1px 0; }
+
+  /* ---- SHOP ---- */
+  #shop {
+    padding: 7rem 4rem;
+    background: radial-gradient(ellipse 80% 60% at 50% 50%, rgba(56,189,248,0.08) 0%, transparent 70%), var(--ink);
+  }
+  .shop-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2rem;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+  .shop-card {
+    border: 1px solid rgba(192,132,252,0.18);
+    overflow: hidden;
+    transition: all 0.4s;
+    background: rgba(255,255,255,0.02);
+  }
+  .shop-card:hover {
+    border-color: rgba(192,132,252,0.45);
+    transform: translateY(-4px);
+    box-shadow: 0 16px 40px rgba(0,0,0,0.5), 0 0 20px rgba(192,132,252,0.15);
+  }
+  .shop-img {
+    height: 220px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 5rem;
+    position: relative;
+    overflow: hidden;
+  }
+  .shop-img.books { background: linear-gradient(135deg, #0f0520, #1a0a35); }
+  .shop-img.games { background: linear-gradient(135deg, #030d1f, #071530); }
+  .shop-img.merch { background: linear-gradient(135deg, #1a0520, #2a0835); }
+  .shop-img-glow {
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse at 50% 100%, rgba(192,132,252,0.2), transparent 60%);
+  }
+  .shop-body { padding: 1.8rem; }
+  .shop-tag {
+    font-family: 'Cinzel', serif;
+    font-size: 0.62rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 0.5rem;
+  }
+  .shop-name {
+    font-family: 'Cinzel', serif;
+    font-size: 1.1rem;
+    color: var(--gold-pale);
+    margin-bottom: 0.7rem;
+  }
+  .shop-desc {
+    font-size: 0.95rem;
+    color: rgba(221,214,254,0.6);
+    line-height: 1.6;
+    margin-bottom: 1.4rem;
+  }
+  .shop-link {
+    font-family: 'Cinzel', serif;
+    font-size: 0.7rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--blue);
+    text-decoration: none;
+    display: inline-flex; align-items: center; gap: 0.5rem;
+    transition: gap 0.3s;
+  }
+  .shop-link:hover { gap: 0.9rem; }
+
+  /* ---- NEWSLETTER ---- */
+  #newsletter {
+    padding: 7rem 4rem;
+    background: linear-gradient(135deg, #08051a 0%, #100a28 50%, #08051a 100%);
+    text-align: center;
+    border-top: 1px solid rgba(192,132,252,0.15);
+    border-bottom: 1px solid rgba(192,132,252,0.15);
+  }
+  #newsletter p {
+    font-size: 1.15rem;
+    font-style: italic;
+    color: var(--mist);
+    max-width: 500px;
+    margin: 0 auto 2.5rem;
+    line-height: 1.8;
+  }
+  .newsletter-form {
+    display: flex; gap: 0; max-width: 480px; margin: 0 auto;
+  }
+  .newsletter-form input {
+    flex: 1;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(192,132,252,0.3);
+    border-right: none;
+    color: var(--parchment);
+    font-family: 'Crimson Pro', serif;
+    font-size: 1rem;
+    padding: 0.9rem 1.4rem;
+    outline: none;
+    transition: border-color 0.3s;
+  }
+  .newsletter-form input::placeholder { color: rgba(221,214,254,0.3); font-style: italic; }
+  .newsletter-form input:focus { border-color: rgba(192,132,252,0.6); }
+  .newsletter-form button {
+    font-family: 'Cinzel', serif;
+    font-size: 0.7rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    background: linear-gradient(135deg, #a855f7, #ec4899);
+    color: #fff;
+    border: none; padding: 0.9rem 1.8rem;
+    cursor: pointer; white-space: nowrap;
+    transition: all 0.3s;
+  }
+  .newsletter-form button:hover {
+    background: linear-gradient(135deg, #c084fc, #f472b6);
+    box-shadow: 0 4px 20px rgba(168,85,247,0.5);
+  }
+  .newsletter-note {
+    margin-top: 1rem;
+    font-size: 0.85rem;
+    color: rgba(192,132,252,0.45);
+    font-style: italic;
+  }
+
+  /* ---- CONTACT ---- */
+  #contact {
+    padding: 7rem 4rem;
+    background: var(--ink);
+  }
+  .contact-inner {
+    max-width: 700px;
+    margin: 0 auto;
+    text-align: center;
+  }
+  .contact-inner > p {
+    font-size: 1.1rem;
+    font-style: italic;
+    color: var(--mist);
+    line-height: 1.8;
+    margin-bottom: 3rem;
+  }
+  .contact-form {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.2rem;
+  }
+  .contact-form .full { grid-column: 1 / -1; }
+  .contact-form input,
+  .contact-form textarea {
+    width: 100%;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(192,132,252,0.2);
+    color: var(--parchment);
+    font-family: 'Crimson Pro', serif;
+    font-size: 1rem;
+    padding: 0.9rem 1.2rem;
+    outline: none;
+    transition: border-color 0.3s;
+    resize: vertical;
+  }
+  .contact-form input::placeholder,
+  .contact-form textarea::placeholder { color: rgba(221,214,254,0.3); font-style: italic; }
+  .contact-form input:focus,
+  .contact-form textarea:focus { border-color: rgba(192,132,252,0.5); }
+  .contact-form textarea { min-height: 140px; }
+  .contact-form .submit-btn {
+    grid-column: 1 / -1;
+    font-family: 'Cinzel', serif;
+    font-size: 0.78rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    background: transparent;
+    border: 1px solid rgba(192,132,252,0.4);
+    color: var(--gold);
+    padding: 1rem 3rem;
+    cursor: pointer;
+    transition: all 0.3s;
+    clip-path: polygon(10px 0%, 100% 0%, calc(100% - 10px) 100%, 0% 100%);
+  }
+  .contact-form .submit-btn:hover {
+    background: rgba(192,132,252,0.1);
+    border-color: var(--gold);
+    box-shadow: 0 0 20px rgba(192,132,252,0.2);
+  }
+
+  /* ---- FOOTER ---- */
+  footer {
+    padding: 3rem 4rem;
+    border-top: 1px solid rgba(192,132,252,0.12);
+    display: flex; align-items: center; justify-content: space-between;
+    flex-wrap: wrap; gap: 1rem;
+  }
+  .footer-brand {
+    font-family: 'Cinzel Decorative', serif;
+    font-size: 0.9rem;
+    color: var(--gold);
+    opacity: 0.7;
+  }
+  .footer-copy {
+    font-size: 0.85rem;
+    color: rgba(221,214,254,0.3);
+    font-style: italic;
+  }
+  .footer-links { display: flex; gap: 2rem; }
+  .footer-links a {
+    font-family: 'Cinzel', serif;
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: rgba(192,132,252,0.45);
+    text-decoration: none;
+    transition: color 0.3s;
+  }
+  .footer-links a:hover { color: var(--gold); }
+
+  /* ---- KEYFRAMES ---- */
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes heroReveal {
+    from { opacity: 0; transform: translateY(40px) scale(0.95); letter-spacing: 0.2em; }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+  }
+
+  /* ---- SCROLL ANIMATIONS ---- */
+  .reveal {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.8s ease, transform 0.8s ease;
+  }
+  .reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* ---- MOBILE ---- */
+  @media (max-width: 900px) {
+    nav { padding: 1rem 1.5rem; }
+    .nav-links { gap: 1.2rem; }
+    #lore, #characters, #shop, #contact, #newsletter { padding: 5rem 2rem; }
+    .lore-grid { grid-template-columns: 1fr; gap: 3rem; }
+    .lore-art { display: none; }
+    .chars-grid, .shop-grid { grid-template-columns: 1fr; }
+    .contact-form { grid-template-columns: 1fr; }
+    .contact-form .full { grid-column: auto; }
+    footer { flex-direction: column; text-align: center; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="#hero" class="nav-logo">Bravely World</a>
+  <ul class="nav-links">
+    <li><a href="#lore">The World</a></li>
+    <li><a href="#characters">Characters</a></li>
+    <li><a href="#shop">Shop</a></li>
+    <li><a href="#newsletter">Updates</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-bg"></div>
+  <div class="stars"></div>
+  <div class="hero-crest"></div>
+  <p class="hero-eyebrow">An Epic Fantasy Universe</p>
+  <h1>Bravely<br/><span>World</span></h1>
+  <p class="hero-sub">Where ancient powers stir, unlikely heroes rise, and every legend is only the beginning of a greater story.</p>
+  <div class="hero-btns">
+    <a href="#lore" class="btn-primary">Enter the World</a>
+    <a href="#shop" class="btn-secondary">Explore the Shop</a>
+  </div>
+  <div class="scroll-hint">Scroll</div>
+</section>
+
+<!-- LORE -->
+<section id="lore">
+  <div class="section-header reveal">
+    <span class="section-label">Ancient Lore</span>
+    <h2 class="section-title">A World Forged in Valor</h2>
+    <div class="divider">
+      <div class="divider-line"></div>
+      <span>✦</span>
+      <div class="divider-line right"></div>
+    </div>
+  </div>
+  <div class="lore-grid">
+    <div class="lore-text reveal">
+      <p>In an age before memory, the <strong>First Fires</strong> were lit across the realm — not by gods, but by those who dared to face the darkness with open hands. This is Bravely World: a living, breathing universe of myth, conflict, and extraordinary courage.</p>
+      <p>Across <strong>seven kingdoms</strong> and countless wilds, the threads of fate weave together warriors, wanderers, scholars, and outcasts — each carrying a piece of a prophecy older than the stars above.</p>
+      <p>Bravely World is more than a story. It is a place you can inhabit — through our <strong>novels, games, and artifacts</strong> — a world that grows richer with every tale told.</p>
+      <a href="#shop" class="btn-primary" style="display:inline-block; margin-top:1.5rem;">Discover Our Works</a>
+    </div>
+    <div class="lore-art reveal">
+      <div class="lore-emblem">
+        <svg viewBox="0 0 320 320" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <!-- outer ring -->
+          <circle cx="160" cy="160" r="148" stroke="rgba(192,132,252,0.3)" stroke-width="1"/>
+          <circle cx="160" cy="160" r="138" stroke="rgba(56,189,248,0.15)" stroke-width="1"/>
+          <!-- 8-point star ring -->
+          <g stroke="rgba(192,132,252,0.5)" stroke-width="1">
+            <line x1="160" y1="12" x2="160" y2="40"/>
+            <line x1="160" y1="280" x2="160" y2="308"/>
+            <line x1="12" y1="160" x2="40" y2="160"/>
+            <line x1="280" y1="160" x2="308" y2="160"/>
+            <line x1="57" y1="57" x2="78" y2="78"/>
+            <line x1="242" y1="242" x2="263" y2="263"/>
+            <line x1="263" y1="57" x2="242" y2="78"/>
+            <line x1="78" y1="242" x2="57" y2="263"/>
+          </g>
+          <!-- inner decorative -->
+          <circle cx="160" cy="160" r="90" stroke="rgba(244,114,182,0.4)" stroke-width="1.5" stroke-dasharray="6 4"/>
+          <!-- diamond shape -->
+          <polygon points="160,80 220,160 160,240 100,160" stroke="rgba(192,132,252,0.6)" stroke-width="1.5" fill="rgba(124,58,237,0.06)"/>
+          <!-- inner diamond -->
+          <polygon points="160,105 205,160 160,215 115,160" stroke="rgba(56,189,248,0.35)" stroke-width="1" fill="none"/>
+          <!-- center dot -->
+          <circle cx="160" cy="160" r="8" fill="rgba(192,132,252,0.5)" stroke="rgba(244,114,182,0.9)" stroke-width="1.5"/>
+          <!-- small corner accents -->
+          <circle cx="160" cy="12" r="3" fill="rgba(244,114,182,0.7)"/>
+          <circle cx="160" cy="308" r="3" fill="rgba(56,189,248,0.7)"/>
+          <circle cx="12" cy="160" r="3" fill="rgba(244,114,182,0.7)"/>
+          <circle cx="308" cy="160" r="3" fill="rgba(56,189,248,0.7)"/>
+        </svg>
+        <div class="lore-emblem-center">Brave&shy;ly<br/>World</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CHARACTERS -->
+<section id="characters">
+  <div class="section-header reveal">
+    <span class="section-label">Heroes & Legends</span>
+    <h2 class="section-title">Characters of the Realm</h2>
+    <div class="divider">
+      <div class="divider-line"></div>
+      <span>✦</span>
+      <div class="divider-line right"></div>
+    </div>
+  </div>
+  <div class="chars-grid">
+
+    <div class="char-card reveal">
+      <div class="corner tl"></div><div class="corner tr"></div>
+      <div class="corner bl"></div><div class="corner br"></div>
+      <div class="char-icon">⚔️</div>
+      <div class="char-role">Warden of the North</div>
+      <div class="char-name">Elaryn Voss</div>
+      <p class="char-desc">Born in the siege-scarred highlands, Elaryn wields a blade forged from a fallen star — and a will no darkness has yet broken.</p>
+    </div>
+
+    <div class="char-card reveal" style="transition-delay: 0.1s;">
+      <div class="corner tl"></div><div class="corner tr"></div>
+      <div class="corner bl"></div><div class="corner br"></div>
+      <div class="char-icon">🔮</div>
+      <div class="char-role">Keeper of the Old Ways</div>
+      <div class="char-name">Mireth Dawnscribe</div>
+      <p class="char-desc">The last archivist of a vanished order, Mireth carries the weight of history and the power to rewrite fate itself.</p>
+    </div>
+
+    <div class="char-card reveal" style="transition-delay: 0.2s;">
+      <div class="corner tl"></div><div class="corner tr"></div>
+      <div class="corner bl"></div><div class="corner br"></div>
+      <div class="char-icon">🌿</div>
+      <div class="char-role">Voice of the Wilds</div>
+      <div class="char-name">Thorn Ashroot</div>
+      <p class="char-desc">Half-ranger, half-legend, Thorn walks the border between civilization and the ancient wild — trusted by neither, feared by both.</p>
+    </div>
+
+  </div>
+</section>
+
+<!-- SHOP -->
+<section id="shop">
+  <div class="section-header reveal">
+    <span class="section-label">The Emporium</span>
+    <h2 class="section-title">Artifacts & Works</h2>
+    <div class="divider">
+      <div class="divider-line"></div>
+      <span>✦</span>
+      <div class="divider-line right"></div>
+    </div>
+  </div>
+  <div class="shop-grid">
+
+    <div class="shop-card reveal">
+      <div class="shop-img books">
+        <span>📖</span>
+        <div class="shop-img-glow"></div>
+      </div>
+      <div class="shop-body">
+        <div class="shop-tag">Books & Novels</div>
+        <div class="shop-name">Chronicles of Bravely World</div>
+        <p class="shop-desc">Dive deep into the saga — from the first fires to the Wars of Hollow Kings. Full novels, novellas, and illustrated compendiums.</p>
+        <a href="#" class="shop-link">Browse Books → </a>
+      </div>
+    </div>
+
+    <div class="shop-card reveal" style="transition-delay: 0.1s;">
+      <div class="shop-img games">
+        <span>🎮</span>
+        <div class="shop-img-glow"></div>
+      </div>
+      <div class="shop-body">
+        <div class="shop-tag">Games & Interactive</div>
+        <div class="shop-name">Enter the World</div>
+        <p class="shop-desc">Tabletop adventures, digital games, and interactive experiences that let you forge your own legend in the realm.</p>
+        <a href="#" class="shop-link">Explore Games → </a>
+      </div>
+    </div>
+
+    <div class="shop-card reveal" style="transition-delay: 0.2s;">
+      <div class="shop-img merch">
+        <span>🛡️</span>
+        <div class="shop-img-glow"></div>
+      </div>
+      <div class="shop-body">
+        <div class="shop-tag">Merchandise</div>
+        <div class="shop-name">Bear the Crest</div>
+        <p class="shop-desc">Wear the world — apparel, enamel pins, map prints, and collectibles crafted for true citizens of Bravely World.</p>
+        <a href="#" class="shop-link">Shop Merch → </a>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- NEWSLETTER -->
+<section id="newsletter">
+  <div class="section-header reveal">
+    <span class="section-label">The Heralds</span>
+    <h2 class="section-title">Join the Vanguard</h2>
+    <div class="divider">
+      <div class="divider-line"></div>
+      <span>✦</span>
+      <div class="divider-line right"></div>
+    </div>
+  </div>
+  <p class="reveal">Receive the latest dispatches from the realm — new chapters, product launches, lore reveals, and exclusive offers sent straight to your scroll.</p>
+  <div class="newsletter-form reveal">
+    <input type="email" placeholder="Your email address…"/>
+    <button type="button">Pledge Alliance</button>
+  </div>
+  <p class="newsletter-note reveal">No spam. Only legend. Unsubscribe at any time.</p>
+</section>
+
+<!-- CONTACT -->
+<section id="contact">
+  <div class="contact-inner">
+    <div class="section-header reveal">
+      <span class="section-label">Audience & Inquiries</span>
+      <h2 class="section-title">Send Word</h2>
+      <div class="divider">
+        <div class="divider-line"></div>
+        <span>✦</span>
+        <div class="divider-line right"></div>
+      </div>
+    </div>
+    <p class="reveal">Partnerships, press, licensing, or general questions about the world — we welcome all travelers to our hall. We'll reply within two suns.</p>
+    <form class="contact-form" onsubmit="return false;">
+      <input class="reveal" type="text" placeholder="Your Name"/>
+      <input class="reveal" type="email" placeholder="Your Email" style="transition-delay:0.05s"/>
+      <input class="full reveal" type="text" placeholder="Subject" style="transition-delay:0.1s"/>
+      <textarea class="full reveal" placeholder="Your message…" style="transition-delay:0.15s"></textarea>
+      <button type="submit" class="submit-btn reveal" style="transition-delay:0.2s">Send the Scroll</button>
+    </form>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-brand">Bravely World</div>
+  <div class="footer-links">
+    <a href="#">Privacy</a>
+    <a href="#">Terms</a>
+    <a href="#">Press Kit</a>
+  </div>
+  <div class="footer-copy">© 2026 Bravely World. All rights reserved.</div>
+</footer>
+
+<script>
+  // Scroll reveal
+  const revealEls = document.querySelectorAll('.reveal');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('visible');
+        observer.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.12 });
+  revealEls.forEach(el => observer.observe(el));
+
+  // Smooth nav
+  document.querySelectorAll('a[href^="#"]').forEach(a => {
+    a.addEventListener('click', e => {
+      e.preventDefault();
+      const target = document.querySelector(a.getAttribute('href'));
+      if (target) target.scrollIntoView({ behavior: 'smooth' });
+    });
+  });
+</script>
+</body>
+</html>
